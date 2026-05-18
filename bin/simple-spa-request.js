@@ -19,8 +19,8 @@ let body = '';
 let format = DEFAULT_FORMAT;
 let noConsole = false;
 let noNetwork = false;
-let requests = [];
-let consoleLogs = [];
+let noStyles = false;
+let stylesheets = [];
 
 for (const arg of args) {
   if (arg.startsWith('-t') || arg.startsWith('--timeout=')) {
@@ -33,9 +33,24 @@ for (const arg of args) {
     const headerValue = arg.replace('-h', '').replace('--header=', '');
     const [key, value] = headerValue.split(':');
     headers[key.trim()] = value.trim();
+  } else if (arg === '--help') {
+    console.log('Usage: simple-spa-request [arguments] <url>');
+    console.log('');
+    console.log('Arguments:');
+    console.log('-t, --timeout=: Time in milliseconds after which to grab DOM/console/logs/network. Default: 3000');
+    console.log('-j, --javascript=: Block of JavaScript to run in console after timeout. Default: none');
+    console.log('-w, --wait=: Time in milliseconds after which to grab output if JavaScript is supplied. Default: 0');
+    console.log('-h, --header=: Sets HTTP header for request (can be used for authorization). Multiple headers can be set. Default: none');
+    console.log('-m, --method=: Sets HTTP method to use. Default: GET');
+    console.log('-b, --body=: Specifies body to send with request (for POST). Default: none');
+    console.log('-f, --format=: Specifies output format. Options: json, html, markdown. Default: markdown');
+    console.log('-nc, --no-console: Skips including console output');
+    console.log('-nn, --no-network: Skips including network output');
+    console.log('-ns, --no-styles: Skips including stylesheet and rule output');
+    process.exit(0);
+  } else if (arg === '-ns' || arg === '--no-styles') {
+    noStyles = true;
   } else if (arg.startsWith('-m') || arg.startsWith('--method=')) {
-    method = arg.replace('-m', '').replace('--method=', '').toUpperCase();
-  } else if (arg.startsWith('-b') || arg.startsWith('--body=')) {
     body = arg.replace('-b', '').replace('--body=', '');
   } else if (arg.startsWith('-f') || arg.startsWith('--format=')) {
     format = arg.replace('-f', '').replace('--format=', '').toLowerCase();
@@ -49,7 +64,7 @@ for (const arg of args) {
 }
 
 if (!url) {
-  console.error('Usage: simple-spa-request <url> [arguments]');
+  console.error('Usage: simple-spa-request [arguments] <url>');
   process.exit(1);
 }
 
@@ -58,7 +73,9 @@ async function main() {
   const context = await browser.newContext({
     httpHeaders: headers
   });
+  const page = await context.newPage();
 
+  let requests = [];
   context.on('request', request => {
     requests.push({
       url: request.url(),
@@ -83,8 +100,7 @@ async function main() {
     }
   });
 
-  const page = await context.newPage();
-
+  let consoleLogs = [];
   page.on('console', msg => {
     consoleLogs.push({type: msg.type(), text: msg.text()});
   });
@@ -106,20 +122,32 @@ async function main() {
     await new Promise(resolve => setTimeout(resolve, waitAfterJs));
   }
 
-  const dom = await page.content();
-  
-  let networkRequests = [];
-  if (!noNetwork) {
-    networkRequests = requests;
-  }
+  stylesheets = await page.evaluate(() => {
+    return Array.from(document.styleSheets).map(sheet => {
+      try {
+        const rules = Array.from(sheet.cssRules).map(rule => rule.cssText);
+        return {href: sheet.href || 'inline', rules};
+      } catch {
+        return {href: sheet.href || 'inline', rules: []};
+      }
+    });
+  });
 
-  await browser.close();
+  const dom = await page.content();
+
+   let networkRequests = [];
+   if (!noNetwork) {
+     networkRequests = requests;
+   }
+
+   await browser.close();
 
   if (format === 'json') {
     const output = {
       dom,
       consoleLogs,
-      networkRequests
+      networkRequests,
+      stylesheets
     };
     console.log(JSON.stringify(output, null, 2));
   } else if (format === 'html') {
@@ -129,13 +157,27 @@ async function main() {
     if (!noConsole && consoleLogs.length > 0) {
       console.log('\n## Console Logs\n');
       for (const log of consoleLogs) {
-        console.log('- ' + `[${log.type}] ${log.text}`);
+        console.log('- [' + log.type + '] ' + log.text);
       }
     }
     if (!noNetwork && networkRequests.length > 0) {
       console.log('\n## Network Requests\n');
       for (const req of networkRequests) {
-        console.log('- ' + req.url + ' (' + req.method + ') - Status: ' + (req.status || 'N/A') + `, Resource Type: ${req.resourceType} `);
+        console.log('- ' + req.url + ' (' + req.method + ') - Status: ' + (req.status || 'N/A') + ', Resource Type: ' + req.resourceType);
+      }
+    }
+    if (!noStyles) {
+      if (stylesheets.length > 0) {
+        console.log('\n## Stylesheets\n');
+        for (const sheet of stylesheets) {
+          console.log('- ' + (sheet.href || 'Inline stylesheet'));
+          if (sheet.rules && sheet.rules.length > 0) {
+            console.log('  Rules:');
+            for (const rule of sheet.rules) {
+              console.log('    - ' + rule);
+            }
+          }
+        }
       }
     }
   }
