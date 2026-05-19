@@ -1,6 +1,6 @@
 # simple-spa-request
 
-A CLI tool for fetching DOM, console logs, and network requests from Single Page Application (SPA) websites using Playwright.
+A CLI tool for fetching DOM, console logs, stylesheet rules and network requests from Single Page Application (SPA) websites using Playwright. It returns the data as either the raw HTML DOM, a Markdown document, or a JSON object; it is meant to feed other applications such as local LLMs or scripts.
 
 ## Installation
 
