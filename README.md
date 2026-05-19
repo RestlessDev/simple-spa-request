@@ -17,7 +17,7 @@ yarn install -g simple-spa-request
 ## Usage
 
 ```bash
-simple-spa-request <url> [arguments]
+simple-spa-request [arguments] <url>
 ```
 
 ## Arguments
