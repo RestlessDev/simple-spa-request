@@ -22,15 +22,16 @@ let noNetwork = false;
 let noStyles = false;
 let stylesheets = [];
 
-for (const arg of args) {
-  if (arg.startsWith('-t') || arg.startsWith('--timeout=')) {
-    timeout = parseInt(arg.replace('-t', '').replace('--timeout=', ''), 10);
-  } else if (arg.startsWith('-j') || arg.startsWith('--javascript=')) {
-    javascript = arg.replace('-j', '').replace('--javascript=', '');
-  } else if (arg.startsWith('-w') || arg.startsWith('--wait=')) {
-    waitAfterJs = parseInt(arg.replace('-w', '').replace('--wait=', ''), 10);
-  } else if (arg.startsWith('-h') || arg.startsWith('--header=')) {
-    const headerValue = arg.replace('-h', '').replace('--header=', '');
+for (let i = 0; i < args.length; i++) {
+  const arg = args[i];
+  if (arg === '-t' || arg.startsWith('--timeout=')) {
+    timeout = parseInt(i < args.length - 1 && arg === '-t' ? args[++i] : arg.replace('--timeout=', ''), 10);
+  } else if (arg === '-j' || arg.startsWith('--javascript=')) {
+    javascript = i < args.length - 1 && arg === '-j' ? args[++i] : arg.replace('--javascript=', '');
+  } else if (arg === '-w' || arg.startsWith('--wait=')) {
+    waitAfterJs = parseInt(i < args.length - 1 && arg === '-w' ? args[++i] : arg.replace('--wait=', ''), 10);
+  } else if (arg === '-h' || arg.startsWith('--header=')) {
+    const headerValue = i < args.length - 1 && arg === '-h' ? args[++i] : arg.replace('--header=', '');
     const [key, value] = headerValue.split(':');
     headers[key.trim()] = value.trim();
   } else if (arg === '--help') {
@@ -50,12 +51,12 @@ for (const arg of args) {
     process.exit(0);
   } else if (arg === '-ns' || arg === '--no-styles') {
     noStyles = true;
-  } else if (arg.startsWith('-m') || arg.startsWith('--method=')) {
-    method = arg.replace('-m', '').replace('--method=', '');
-  } else if (arg.startsWith('-b') || arg.startsWith('--body=')) {
-    body = arg.replace('-b', '').replace('--body=', '');
-  } else if (arg.startsWith('-f') || arg.startsWith('--format=')) {
-    format = arg.replace('-f', '').replace('--format=', '').toLowerCase();
+  } else if (arg === '-m' || arg.startsWith('--method=')) {
+    method = i < args.length - 1 && arg === '-m' ? args[++i] : arg.replace('--method=', '');
+  } else if (arg === '-b' || arg.startsWith('--body=')) {
+    body = i < args.length - 1 && arg === '-b' ? args[++i] : arg.replace('--body=', '');
+  } else if (arg === '-f' || arg.startsWith('--format=')) {
+    format = i < args.length - 1 && arg === '-f' ? args[++i] : arg.replace('--format=', '').toLowerCase();
   } else if (arg === '-nc' || arg === '--no-console') {
     noConsole = true;
   } else if (arg === '-nn' || arg === '--no-network') {
@@ -64,7 +65,7 @@ for (const arg of args) {
     url = arg;
   }
 }
-console.log(javascript)
+
 if (!url) {
   console.error('Usage: simple-spa-request [arguments] <url>');
   process.exit(1);
