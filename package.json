@@ -1,6 +1,6 @@
 {
   "name": "simple-spa-request",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A CLI tool for fetching DOM, console logs, styles and network requests from SPA websites using Playwright",
   "keywords": [
     "spa",
@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "author": "Mike Arace",
-  "type": "commonjs",
+  "type": "module",
   "main": "bin/simple-spa-request.js",
   "bin": {
     "simple-spa-request": "bin/simple-spa-request.js"
