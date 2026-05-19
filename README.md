@@ -85,6 +85,7 @@ The output includes:
 - DOM content in a code block
 - Console logs as bullet points
 - Network requests with URL, method, and status
+- Stylesheets and their rules
 
 ### HTML
 
@@ -96,6 +97,7 @@ JSON object containing:
 - `dom`: DOM content
 - `consoleLogs`: Array of console log messages
 - `networkRequests`: Array of network request details
+- `stylesheets`: Array of stylesheets and their associated rules
 
 ## License
 
