@@ -1,14 +1,7 @@
 {
   "name": "simple-spa-request",
   "version": "0.5.0",
-  "description": "A CLI tool for fetching DOM, console logs, and network requests from SPA websites using Playwright",
-  "main": "bin/simple-spa-request.js",
-  "bin": {
-    "simple-spa-request": "bin/simple-spa-request.js"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "A CLI tool for fetching DOM, console logs, styles and network requests from SPA websites using Playwright",
   "keywords": [
     "spa",
     "playwright",
@@ -17,10 +10,27 @@
     "console",
     "network"
   ],
-  "author": "",
+  "homepage": "https://github.com/RestlessDev/simple-spa-request#readme",
+  "bugs": {
+    "url": "https://github.com/RestlessDev/simple-spa-request/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RestlessDev/simple-spa-request.git"
+  },
   "license": "MIT",
+  "author": "Mike Arace",
+  "type": "commonjs",
+  "main": "bin/simple-spa-request.js",
+  "bin": {
+    "simple-spa-request": "bin/simple-spa-request.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "playwright": "^1.60.0",
     "@playwright/browser-chromium": "^1.60.0"
-  }
+  },
+  "devDependencies": {}
 }
