@@ -108,15 +108,19 @@ async function main() {
     consoleLogs.push({type: msg.type(), text: msg.text()});
   });
 
+  let response = null;
+
   if (method === 'POST') {
-    await page.goto(url, {
+    response = await page.goto(url, {
       method: 'POST',
       data: body,
       headers: headers
     });
   } else {
-    await page.goto(url);
+    response = await page.goto(url);
   }
+
+  const contentType = response.headers()['content-type'] || '';
 
   await new Promise(resolve => setTimeout(resolve, timeout));
 
@@ -135,10 +139,17 @@ async function main() {
       }
     });
   });
-
-  const dom = await page.content();
-
-   let networkRequests = [];
+  
+  let dom = "";
+  if (contentType.includes('application/json')) {
+    dom = await response.json();
+  } else if (contentType.includes('text/html')) {
+    dom = await page.content();
+  } else {
+    dom = await response.text();
+  }
+  
+  let networkRequests = [];
    if (!noNetwork) {
      networkRequests = requests;
    }

@@ -1,6 +1,6 @@
 {
   "name": "simple-spa-request",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "description": "A CLI tool for fetching DOM, console logs, styles and network requests from SPA websites using Playwright",
   "keywords": [
     "spa",
