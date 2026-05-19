@@ -31,6 +31,7 @@ simple-spa-request <url> [arguments]
 - `-f`, `--format=`: Specifies output format. Options: json, html, markdown. Default: markdown.
 - `-nc`, `--no-console`: Skips including console output.
 - `-nn`, `--no-network`: Skips including network output.
+- `-ns`, `--no-styles`: Skips including stylesheet and rule output.
 
 ## Examples
 

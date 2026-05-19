@@ -51,6 +51,8 @@ for (const arg of args) {
   } else if (arg === '-ns' || arg === '--no-styles') {
     noStyles = true;
   } else if (arg.startsWith('-m') || arg.startsWith('--method=')) {
+    method = arg.replace('-m', '').replace('--method=', '');
+  } else if (arg.startsWith('-b') || arg.startsWith('--body=')) {
     body = arg.replace('-b', '').replace('--body=', '');
   } else if (arg.startsWith('-f') || arg.startsWith('--format=')) {
     format = arg.replace('-f', '').replace('--format=', '').toLowerCase();
@@ -62,7 +64,7 @@ for (const arg of args) {
     url = arg;
   }
 }
-
+console.log(javascript)
 if (!url) {
   console.error('Usage: simple-spa-request [arguments] <url>');
   process.exit(1);
